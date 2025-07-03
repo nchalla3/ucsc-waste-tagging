@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "951790444921",
+    "project_id": "waste-tagging-app",
+    "storage_bucket": "waste-tagging-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951790444921:android:9cab8eda6cd98713014fa8",
+        "android_client_info": {
+          "package_name": "com.example.waste_tagging_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC7H4tpkAqk8FbcYu_36_Op1M63yePlHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
