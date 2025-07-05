@@ -1,17 +1,11 @@
-# waste_tagging_app
+# UCSC Waste Tagging App
 
 A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This is the initial MVP of a project tasked to me by the UCSC Sustainability Office: an AI-powered waste auditing application that uses machine learning to assist in determining the state of campus waste sorting. 
 
-A few resources to get you started if this is your first Flutter project:
+My initial plan is to start by creating a simple mobile application where users can upload a variety of images of campus trash and tag it with data regarding the types of contaminants/waste in the dumpsters. The goal is to crowdsource this app to sustainability-motivated UCSC students, with the idea of creating a large dataset to train an AI model that can eventually perform this analysis independent of manual tagging.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# ucsc-waste-tagging
+From here, I will create a model trained on the aforementioned data to be able to utilize computer vision to automatically determine the levels of contamination in a given campus dumpster using PyTorch and TensorFlow to get a better understanding of how accurately garbage and recycling are sorted in their respective bins on campus
