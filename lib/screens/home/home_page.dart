@@ -29,30 +29,44 @@ class _HomePageState extends State<HomePage> {
   Future<void> _saveData() async {
     if (_imageFile == null) return;
 
-    // Upload to Firebase Storage
-    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    final storageRef = FirebaseStorage.instance.ref().child('uploads/$fileName.jpg');
-    await storageRef.putFile(_imageFile!);
-    final imageUrl = await storageRef.getDownloadURL();
+    try {
+      // Upload to Firebase Storage
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final storageRef = FirebaseStorage.instance.ref().child('uploads/$fileName.jpg');
+      await storageRef.putFile(_imageFile!);
+      final imageUrl = await storageRef.getDownloadURL();
 
-    // Save metadata to Firestore
-    await FirebaseFirestore.instance.collection('waste_reports').add({
-      'imageUrl': imageUrl,
-      'lighting': _lightingController.text,
-      'notes': _notesController.text,
-      'timestamp': FieldValue.serverTimestamp(),
-      'userId': FirebaseAuth.instance.currentUser?.uid,
-    });
+      // Save metadata to Firestore
+      await FirebaseFirestore.instance.collection('waste_reports').add({
+        'imageUrl': imageUrl,
+        'lighting': _lightingController.text,
+        'notes': _notesController.text,
+        'timestamp': FieldValue.serverTimestamp(),
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Upload successful!'),
-    ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Successfully logged waste'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+        ),
+      );
 
-    setState(() {
-      _imageFile = null;
-      _lightingController.clear();
-      _notesController.clear();
-    });
+      setState(() {
+        _imageFile = null;
+        _lightingController.clear();
+        _notesController.clear();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Failed to save data'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
