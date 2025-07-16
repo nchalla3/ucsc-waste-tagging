@@ -59,6 +59,8 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/google_logo.png
+    - assets/images/ucsc_logo.png
+    - assets/images/sustainability_office.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
