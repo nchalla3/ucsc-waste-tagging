@@ -39,50 +39,96 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loading ? null : _login,
-              child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text('Log In'),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'OR',
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              // App Title
+              const Text(
+                'UCSC Waste Auditing',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 16),
-            const GoogleSignInButton(),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SignUpPage()),
-                );
-              },
-              child: const Text("Don't have an account? Sign up"),
-            ),
-          ],
+              const SizedBox(height: 16),
+              // Caption
+              const Text(
+                'A crowdsourced initiative to get a better understanding of campus waste objectives and goals',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const Spacer(),
+              // Login Form
+              if (_error != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _loading ? null : _login,
+                  child: _loading
+                      ? const CircularProgressIndicator()
+                      : const Text('Log In'),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'OR',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const GoogleSignInButton(),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SignUpPage()),
+                  );
+                },
+                child: const Text("Don't have an account? Sign up"),
+              ),
+              const Spacer(flex: 1),
+            ],
+          ),
         ),
       ),
     );
