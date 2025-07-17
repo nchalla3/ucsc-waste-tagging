@@ -35,6 +35,57 @@ final List<String> _binOptions = [
   'Other',
 ];
 
+// Instruction Step Widget
+class _InstructionStep extends StatelessWidget {
+  final String number;
+  final String text;
+
+  const _InstructionStep({
+    required this.number,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: Color(0xFF2E7D32), // Forest Green
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                number,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Color(0xFF212121), // Charcoal
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -125,7 +176,7 @@ class _HomePageState extends State<HomePage> {
       );
       // update states so that users can upload multiple photos
       setState(() {
-        _uploadedImageUrl = imageUrl;
+        _uploadedImageUrl = null; // Reset to show placeholder
         _imageFile = null;
         _webImageBytes = null;
         _notesController.clear();
@@ -171,12 +222,95 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // App Title and Description
+            const Text(
+              'UCSC Waste Auditing',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF003C71), 
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'A crowdsourced initiative to get a better understanding of progress towards campus waste objectives',
+              style: TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+                color: Color(0xFF2E7D32), 
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            // Instructions
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Color(0xFFE8F5E9), // Light pastel green background
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF2E7D32), width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'How to help:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003C71), // UCSC Blue
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const _InstructionStep(
+                    number: '1',
+                    text: 'Take a picture of your trash, recycling, or compost',
+                  ),
+                  const _InstructionStep(
+                    number: '2',
+                    text: 'Identify the contents you can see',
+                  ),
+                  const _InstructionStep(
+                    number: '3',
+                    text: 'Note the lighting conditions and any additional notes',
+                  ),
+                  const _InstructionStep(
+                    number: '4',
+                    text: 'Press save!',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            
+            // Image Display
             _webImageBytes != null
                 ? Image.memory(_webImageBytes!, height: 200, width: double.infinity, fit: BoxFit.cover)
                 : _imageFile != null
                     ? Image.file(_imageFile!, height: 200, width: double.infinity, fit: BoxFit.cover)
                     : _uploadedImageUrl != null
-                        ? Image.network(_uploadedImageUrl!, height: 200, width: double.infinity, fit: BoxFit.cover)
+                        ? Image.network(
+                            _uploadedImageUrl!, 
+                            height: 200, 
+                            width: double.infinity, 
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                height: 200,
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Image(
+                                    image: AssetImage(
+                                      'assets/images/placeholder_image.png',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
                         : Image.asset(
                             'assets/images/placeholder_image.png',
                             height: 200,
