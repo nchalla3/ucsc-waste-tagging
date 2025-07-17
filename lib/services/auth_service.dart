@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
 
   User? get currentUser => _auth.currentUser;
 
@@ -17,6 +19,8 @@ class AuthService {
       if (kIsWeb) {
         // For web platforms, use the popup flow
         final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
         return await _auth.signInWithPopup(googleProvider);
       } else {
         // For mobile platforms (Android/iOS)
@@ -64,9 +68,11 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    // Sign out from Google if signed in
-    if (await _googleSignIn.isSignedIn()) {
+    // Sign out from Google and Firebase
+    try {
       await _googleSignIn.signOut();
+    } catch (_) {
+      // Ignore errors if Google Sign-In wasn't used
     }
     await _auth.signOut();
   }

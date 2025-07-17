@@ -28,6 +28,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? _imageFile;
+  Uint8List? _webImageBytes;
+  String? _uploadedImageUrl;
   final picker = ImagePicker();
 
   final TextEditingController _notesController = TextEditingController();
@@ -54,18 +56,34 @@ class _HomePageState extends State<HomePage> {
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      setState(() => _imageFile = File(pickedFile.path));
+      if (kIsWeb) {
+        final bytes = await pickedFile.readAsBytes();
+        setState(() {
+          _webImageBytes = bytes;
+          _imageFile = null;
+        });
+      } else {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+          _webImageBytes = null;
+        });
+      }
     }
   }
 
   Future<void> _saveData() async {
-    if (_imageFile == null) return;
+    if (!kIsWeb && _imageFile == null) return;
+    if (kIsWeb && _webImageBytes == null) return;
 
     try {
       // Upload to Firebase Storage
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final storageRef = FirebaseStorage.instance.ref().child('uploads/$fileName.jpg');
-      await storageRef.putFile(_imageFile!);
+      if (kIsWeb) {
+        await storageRef.putData(_webImageBytes!);
+      } else {
+        await storageRef.putFile(_imageFile!);
+      }
       final imageUrl = await storageRef.getDownloadURL();
 
       // Save metadata to Firestore
@@ -92,7 +110,9 @@ class _HomePageState extends State<HomePage> {
       );
 
       setState(() {
+        _uploadedImageUrl = imageUrl;
         _imageFile = null;
+        _webImageBytes = null;
         _notesController.clear();
         _selectedLighting = null;
         _customLightingController.clear();
@@ -129,26 +149,18 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _imageFile != null
-                ? (kIsWeb
-                    ? Image.asset(
-                        'assets/images/placeholder_image.png',
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.file(
-                        _imageFile!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ))
-                : Image.asset(
-                    'assets/images/placeholder_image.png',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+            _webImageBytes != null
+                ? Image.memory(_webImageBytes!, height: 200, width: double.infinity, fit: BoxFit.cover)
+                : _imageFile != null
+                    ? Image.file(_imageFile!, height: 200, width: double.infinity, fit: BoxFit.cover)
+                    : _uploadedImageUrl != null
+                        ? Image.network(_uploadedImageUrl!, height: 200, width: double.infinity, fit: BoxFit.cover)
+                        : Image.asset(
+                            'assets/images/placeholder_image.png',
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
