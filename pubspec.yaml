@@ -37,13 +37,13 @@ dependencies:
   firebase_core: ^3.15.1
   firebase_auth: ^5.6.2
   google_sign_in: ^6.2.1
+  firebase_storage: ^12.4.9
+  cloud_firestore: ^5.6.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase_storage: ^12.4.9
-  cloud_firestore: ^5.6.2
-  image_picker: ^1.1.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -61,6 +61,7 @@ flutter:
     - assets/images/google_logo.png
     - assets/images/ucsc_logo.png
     - assets/images/sustainability_office.png
+    - assets/images/placeholder_image.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
