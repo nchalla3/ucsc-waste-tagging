@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -130,21 +130,24 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             _imageFile != null
-                ? Image.file(_imageFile!)
-                : Container(
+                ? (kIsWeb
+                    ? Image.asset(
+                        'assets/images/placeholder_image.png',
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.file(
+                        _imageFile!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ))
+                : Image.asset(
+                    'assets/images/placeholder_image.png',
                     height: 200,
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey,
-                        size: 48,
-                      ),
-                    ),
+                    fit: BoxFit.cover,
                   ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
