@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Failed to save data'),
+          content: const Text('Failed to save image'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 3),
         ),
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UCSC Waste Tracking'),
+        title: const Text('UCSC Waste Logging'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -89,7 +89,22 @@ class _HomePageState extends State<HomePage> {
           children: [
             _imageFile != null
                 ? Image.file(_imageFile!)
-                : const Placeholder(fallbackHeight: 200),
+                : Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey,
+                        size: 48,
+                      ),
+                    ),
+                  ),
+
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
@@ -109,7 +124,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.upload),
-              label: const Text('Save to Firebase'),
+              label: const Text('Save'),
               onPressed: _saveData,
             ),
           ],
