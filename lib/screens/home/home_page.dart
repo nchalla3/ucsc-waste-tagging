@@ -6,8 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Waste Seen multiselect
-final List<String> _wasteSeenOptions = [
+// Waste Observed multiselect
+final List<String> _wasteObservedOptions = [
   'Plastic',
   'Paper',
   'Food',
@@ -17,7 +17,7 @@ final List<String> _wasteSeenOptions = [
   'Hazardous',
   'Other',
 ];
-List<String> _selectedWasteSeen = [];
+List<String> _selectedWasteObserved = [];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -72,8 +72,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _saveData() async {
-    if (!kIsWeb && _imageFile == null) return;
-    if (kIsWeb && _webImageBytes == null) return;
+    // Check if image is available for both web and mobile
+    if (!kIsWeb && _imageFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please take a picture before saving'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+    if (kIsWeb && _webImageBytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please take a picture before saving'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
 
     try {
       // Upload to Firebase Storage
@@ -98,7 +117,7 @@ class _HomePageState extends State<HomePage> {
         'binType': _selectedBin == 'Other' && _customBinController.text.isNotEmpty
             ? _customBinController.text
             : _selectedBin,
-        'wasteSeen': _selectedWasteSeen,
+        'wasteObserved': _selectedWasteObserved,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,7 +137,7 @@ class _HomePageState extends State<HomePage> {
         _customLightingController.clear();
         _selectedBin = null;
         _customBinController.clear();
-        _selectedWasteSeen = [];
+        _selectedWasteObserved = [];
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -168,13 +187,13 @@ class _HomePageState extends State<HomePage> {
               onPressed: _pickImage,
             ),
             const SizedBox(height: 16),
-            // Waste Seen Multiselect
-            _WasteSeenMultiSelect(
-              options: _wasteSeenOptions,
-              selected: _selectedWasteSeen,
+            // Waste Observed Multiselect
+            _WasteObservedMultiSelect(
+              options: _wasteObservedOptions,
+              selected: _selectedWasteObserved,
               onChanged: (selected) {
                 setState(() {
-                  _selectedWasteSeen = selected;
+                  _selectedWasteObserved = selected;
                 });
               },
             ),
@@ -286,13 +305,13 @@ class _DropdownWithOther extends StatelessWidget {
   }
 }
 
-// Waste Seen Multiselect Widget
-class _WasteSeenMultiSelect extends StatelessWidget {
+// Waste Observed Multiselect Widget
+class _WasteObservedMultiSelect extends StatelessWidget {
   final List<String> options;
   final List<String> selected;
   final ValueChanged<List<String>> onChanged;
 
-  const _WasteSeenMultiSelect({
+  const _WasteObservedMultiSelect({
     required this.options,
     required this.selected,
     required this.onChanged,
