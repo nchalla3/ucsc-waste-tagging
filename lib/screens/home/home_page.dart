@@ -16,8 +16,16 @@ class _HomePageState extends State<HomePage> {
   File? _imageFile;
   final picker = ImagePicker();
 
-  final TextEditingController _lightingController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
+
+  String? _selectedLighting;
+  final List<String> _lightingOptions = [
+    'Bright Daylight',
+    'Night/Low Light',
+    'Indoor Light',
+    'Other',
+  ];
+  final TextEditingController _customLightingController = TextEditingController();
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -39,7 +47,9 @@ class _HomePageState extends State<HomePage> {
       // Save metadata to Firestore
       await FirebaseFirestore.instance.collection('waste_reports').add({
         'imageUrl': imageUrl,
-        'lighting': _lightingController.text,
+        'lighting': _selectedLighting == 'Other' && _customLightingController.text.isNotEmpty
+            ? _customLightingController.text
+            : _selectedLighting,
         'notes': _notesController.text,
         'timestamp': FieldValue.serverTimestamp(),
         'userId': FirebaseAuth.instance.currentUser?.uid,
@@ -55,8 +65,9 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _imageFile = null;
-        _lightingController.clear();
         _notesController.clear();
+        _selectedLighting = null;
+        _customLightingController.clear();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,10 +123,39 @@ class _HomePageState extends State<HomePage> {
               onPressed: _pickImage,
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _lightingController,
-              decoration: const InputDecoration(labelText: 'Lighting Conditions'),
+            // Lighting Conditions Dropdown
+            DropdownButtonFormField<String>(
+              value: _selectedLighting,
+              decoration: const InputDecoration(
+                labelText: 'Lighting Conditions',
+                border: OutlineInputBorder(),
+              ),
+              items: _lightingOptions
+                  .map((option) => DropdownMenuItem(
+                        value: option,
+                        child: Text(option),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedLighting = value;
+                  if (value != 'Other') {
+                    _customLightingController.clear();
+                  }
+                });
+              },
             ),
+            if (_selectedLighting == 'Other')
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: TextField(
+                  controller: _customLightingController,
+                  decoration: const InputDecoration(
+                    labelText: 'Please specify lighting',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             TextField(
               controller: _notesController,
