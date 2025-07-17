@@ -25,6 +25,16 @@ class _HomePageState extends State<HomePage> {
     'Indoor Light',
     'Other',
   ];
+
+  final List<String> _binOptions = [
+    'Recycling',
+    'Trash',
+    'Compost',
+    'Other',
+  ];
+
+  String? _selectedBin;
+  final TextEditingController _binController = TextEditingController();
   final TextEditingController _customLightingController = TextEditingController();
 
   Future<void> _pickImage() async {
@@ -53,6 +63,7 @@ class _HomePageState extends State<HomePage> {
         'notes': _notesController.text,
         'timestamp': FieldValue.serverTimestamp(),
         'userId': FirebaseAuth.instance.currentUser?.uid,
+        'binType': _selectedBin,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,6 +79,7 @@ class _HomePageState extends State<HomePage> {
         _notesController.clear();
         _selectedLighting = null;
         _customLightingController.clear();
+        _selectedBin = null;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +127,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
@@ -145,21 +156,46 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             ),
-            if (_selectedLighting == 'Other')
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: TextField(
-                  controller: _customLightingController,
-                  decoration: const InputDecoration(
-                    labelText: 'Please specify lighting',
-                    border: OutlineInputBorder(),
-                  ),
+            if (_selectedLighting == 'Other') ...[
+              const SizedBox(height: 8),
+              TextField(
+                controller: _customLightingController,
+                decoration: const InputDecoration(
+                  labelText: 'Please specify lighting',
+                  border: OutlineInputBorder(),
                 ),
               ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 16),
+            ] else ...[
+              const SizedBox(height: 16),
+            ],
+            // Bin Type Dropdown
+            DropdownButtonFormField<String>(
+              value: _selectedBin,
+              decoration: const InputDecoration(
+                labelText: 'Bin Type',
+                border: OutlineInputBorder(),
+              ),
+              items: _binOptions
+                  .map((option) => DropdownMenuItem(
+                        value: option,
+                        child: Text(option),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedBin = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Additional Notes'),
+              decoration: const InputDecoration(
+                labelText: 'Additional Notes',
+                hintText: 'E.g. bin was overflowing, food waste, etc',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
