@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Waste Observed multiselect
+// --- Data Lists and State ---
 final List<String> _wasteObservedOptions = [
   'Plastic',
   'Paper',
@@ -17,7 +17,23 @@ final List<String> _wasteObservedOptions = [
   'Hazardous',
   'Other',
 ];
+
+// initialize empty list to hold the selects and multiselects
 List<String> _selectedWasteObserved = [];
+
+final List<String> _lightingOptions = [
+  'Bright Daylight',
+  'Night/Low Light',
+  'Indoor Light',
+  'Other',
+];
+
+final List<String> _binOptions = [
+  'Recycling',
+  'Trash',
+  'Compost',
+  'Other',
+];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,34 +43,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // initialize file, image preview and the URL of the image for the firebase DB
   File? _imageFile;
   Uint8List? _webImageBytes;
   String? _uploadedImageUrl;
   final picker = ImagePicker();
 
   final TextEditingController _notesController = TextEditingController();
-
+// store the values of the lighting and bin types
   String? _selectedLighting;
-  final List<String> _lightingOptions = [
-    'Bright Daylight',
-    'Night/Low Light',
-    'Indoor Light',
-    'Other',
-  ];
-
   String? _selectedBin;
-  final List<String> _binOptions = [
-    'Recycling',
-    'Trash',
-    'Compost',
-    'Other',
-  ];
-
   final TextEditingController _customLightingController = TextEditingController();
   final TextEditingController _customBinController = TextEditingController();
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    // display the image preview
     if (pickedFile != null) {
       if (kIsWeb) {
         final bytes = await pickedFile.readAsBytes();
@@ -73,17 +77,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _saveData() async {
     // Check if image is available for both web and mobile
-    if (!kIsWeb && _imageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please take a picture before saving'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
-      );
-      return;
-    }
-    if (kIsWeb && _webImageBytes == null) {
+    final noImage = (!kIsWeb && _imageFile == null) || (kIsWeb && _webImageBytes == null);
+    // Verify that an image has been selected before saving
+    if (noImage) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please take a picture before saving'),
@@ -119,7 +115,7 @@ class _HomePageState extends State<HomePage> {
             : _selectedBin,
         'wasteObserved': _selectedWasteObserved,
       });
-
+      // Confirm that data has been stored
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Successfully logged waste'),
@@ -127,7 +123,7 @@ class _HomePageState extends State<HomePage> {
           duration: const Duration(seconds: 3),
         ),
       );
-
+      // update states so that users can upload multiple photos
       setState(() {
         _uploadedImageUrl = imageUrl;
         _imageFile = null;
@@ -139,6 +135,7 @@ class _HomePageState extends State<HomePage> {
         _customBinController.clear();
         _selectedWasteObserved = [];
       });
+    // error message if the upload fails
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -153,11 +150,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE8F5E9), // Light pastel green
       appBar: AppBar(
-        title: const Text('UCSC Waste Logging'),
+        title: const Text(
+          'UCSC Waste Logging',
+          style: TextStyle(color: Color(0xFF003C71)), // UCSC Blue
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Color(0xFF003C71)),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
             },
@@ -182,8 +185,14 @@ class _HomePageState extends State<HomePage> {
                           ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF003C71), 
+                foregroundColor: Colors.white, 
+                elevation: 2,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
               icon: const Icon(Icons.camera_alt),
-              label: const Text('Take Picture'),
+              label: const Text('Take Picture', style: TextStyle(fontWeight: FontWeight.w600)),
               onPressed: _pickImage,
             ),
             const SizedBox(height: 16),
@@ -232,19 +241,35 @@ class _HomePageState extends State<HomePage> {
               customLabel: 'Please specify bin type',
             ),
             const SizedBox(height: 16),
-
             TextField(
               controller: _notesController,
+              style: const TextStyle(color: Color(0xFF212121)),
               decoration: const InputDecoration(
                 labelText: 'Additional Notes',
+                labelStyle: TextStyle(color: Color(0xFF424242)), 
                 hintText: 'E.g. bin was overflowing, food waste, etc',
+                hintStyle: TextStyle(color: Color(0xFF424242)), 
                 border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF2E7D32)), 
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF1B5E20), width: 2), 
+                ),
+                filled: true,
+                fillColor: Color(0xFFE8F5E9), // Light pastel green (matches select boxes)
               ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF003C71), // UCSC Blue (was yellow)
+                foregroundColor: Colors.white, // onPrimary
+                elevation: 2,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
               icon: const Icon(Icons.upload),
-              label: const Text('Save'),
+              label: const Text('Save', style: TextStyle(fontWeight: FontWeight.w600)),
               onPressed: _saveData,
             ),
           ],
