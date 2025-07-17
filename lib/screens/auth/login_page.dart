@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waste_tagging_app/services/auth_service.dart';
+import 'package:waste_tagging_app/widgets/google_sign_in_button.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -61,6 +62,17 @@ class _LoginPageState extends State<LoginPage> {
                   ? const CircularProgressIndicator()
                   : const Text('Log In'),
             ),
+            const SizedBox(height: 16),
+            const Text(
+              'OR',
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const GoogleSignInButton(),
+            const SizedBox(height: 16),
             TextButton(
               onPressed: () {
                 Navigator.push(

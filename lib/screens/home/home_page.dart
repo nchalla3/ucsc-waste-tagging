@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,8 +14,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? _imageFile;
-  Uint8List? _webImageBytes;
-  String? _uploadedImageUrl;
   final picker = ImagePicker();
 
   final TextEditingController _lightingController = TextEditingController();
@@ -25,34 +22,18 @@ class _HomePageState extends State<HomePage> {
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      if (kIsWeb) {
-        final bytes = await pickedFile.readAsBytes();
-        setState(() {
-          _webImageBytes = bytes;
-          _imageFile = null;
-        });
-      } else {
-        setState(() {
-          _imageFile = File(pickedFile.path);
-          _webImageBytes = null;
-        });
-      }
+      setState(() => _imageFile = File(pickedFile.path));
     }
   }
 
   Future<void> _saveData() async {
-    if (!kIsWeb && _imageFile == null) return;
-    if (kIsWeb && _webImageBytes == null) return;
+    if (_imageFile == null) return;
 
     try {
       // Upload to Firebase Storage
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final storageRef = FirebaseStorage.instance.ref().child('uploads/$fileName.jpg');
-      if (kIsWeb) {
-        await storageRef.putData(_webImageBytes!);
-      } else {
-        await storageRef.putFile(_imageFile!);
-      }
+      await storageRef.putFile(_imageFile!);
       final imageUrl = await storageRef.getDownloadURL();
 
       // Save metadata to Firestore
@@ -73,9 +54,7 @@ class _HomePageState extends State<HomePage> {
       );
 
       setState(() {
-        _uploadedImageUrl = imageUrl;
         _imageFile = null;
-        _webImageBytes = null;
         _lightingController.clear();
         _notesController.clear();
       });
@@ -108,13 +87,9 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _webImageBytes != null
-                ? Image.memory(_webImageBytes!, height: 200, fit: BoxFit.cover)
-                : _imageFile != null
-                    ? Image.file(_imageFile!, height: 200, fit: BoxFit.cover)
-                    : _uploadedImageUrl != null
-                        ? Image.network(_uploadedImageUrl!, height: 200, fit: BoxFit.cover)
-                        : const Placeholder(fallbackHeight: 200),
+            _imageFile != null
+                ? Image.file(_imageFile!)
+                : const Placeholder(fallbackHeight: 200),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
