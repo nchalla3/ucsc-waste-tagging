@@ -312,7 +312,7 @@ class _HomePageState extends State<HomePage> {
                             },
                           )
                         : Image.asset(
-                            'assets/images/placeholder_image.png',
+                            'assets/images/waste_tagging_logo.png',
                             height: 200,
                             width: double.infinity,
                             fit: BoxFit.cover,
