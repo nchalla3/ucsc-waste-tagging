@@ -474,8 +474,7 @@ class _WasteObservedMultiSelect extends StatelessWidget {
     required this.options,
     required this.selected,
     required this.onChanged,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
