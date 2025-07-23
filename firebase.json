@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"waste-tagging-app","appId":"1:951790444921:android:9cab8eda6cd98713014fa8","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"waste-tagging-app","configurations":{"android":"1:951790444921:android:9cab8eda6cd98713014fa8","ios":"1:951790444921:ios:bd4a5d2626167bf1014fa8","macos":"1:951790444921:ios:bd4a5d2626167bf1014fa8","web":"1:951790444921:web:66bdb720192441c0014fa8","windows":"1:951790444921:web:8ee6959d14d3dd95014fa8"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "waste-tagging-app",
+          "appId": "1:951790444921:android:9cab8eda6cd98713014fa8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "waste-tagging-app",
+          "configurations": {
+            "android": "1:951790444921:android:9cab8eda6cd98713014fa8",
+            "ios": "1:951790444921:ios:bd4a5d2626167bf1014fa8",
+            "macos": "1:951790444921:ios:bd4a5d2626167bf1014fa8",
+            "web": "1:951790444921:web:66bdb720192441c0014fa8",
+            "windows": "1:951790444921:web:8ee6959d14d3dd95014fa8"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
