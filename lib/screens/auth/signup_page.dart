@@ -12,7 +12,6 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _auth = AuthService();
 
   bool _loading = false;
@@ -25,12 +24,10 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     try {
-      final userCredential = await _auth.signUp(
+      await _auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
-      await _auth.updateUsername(username: _usernameController.text.trim());
 
       // Firebase automatically signs in the user after sign-up
     } catch (e) {
@@ -63,24 +60,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            TextField(
-              controller: _usernameController,
-              style: const TextStyle(color: Color(0xFF212121)), // Charcoal
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                labelStyle: TextStyle(color: Color(0xFF424242)), // Dark Gray
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2E7D32)), // Forest Green
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF1B5E20), width: 2), // Deep Forest Green
-                ),
-                filled: true,
-                fillColor: Colors.white, // Surface
-              ),
-            ),
-            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               style: const TextStyle(color: Color(0xFF212121)), // Charcoal
