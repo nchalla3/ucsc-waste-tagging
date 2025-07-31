@@ -25,7 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     try {
-      final userCredential = await _auth.signUp(
+      await _auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -33,10 +33,16 @@ class _SignUpPageState extends State<SignUpPage> {
       await _auth.updateUsername(username: _usernameController.text.trim());
 
       // Firebase automatically signs in the user after sign-up
+      // Navigate back to let AuthWrapper handle the authenticated state
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       setState(() => _error = e.toString());
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
