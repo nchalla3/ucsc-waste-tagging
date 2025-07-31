@@ -29,7 +29,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           );
         }
       } else {
-        // Success - AuthWrapper will handle navigation
+        // Success - Navigate back to let AuthWrapper handle the authenticated state
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -37,6 +37,10 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               backgroundColor: Colors.green,
             ),
           );
+          
+          // If we're on the SignUpPage, navigate back to let AuthWrapper handle navigation
+          // Check if we're in a nested navigation context (i.e., SignUpPage pushed from LoginPage)
+          Navigator.of(context).popUntil((route) => route.isFirst);
         }
       }
     } catch (e) {

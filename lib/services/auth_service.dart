@@ -83,12 +83,6 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future<void> updateUsername({
-    required String username,
-  }) async {
-    await currentUser!.updateDisplayName(username);
-  }
-
   Future<void> deleteAccount({
     required String email,
     required String password,
