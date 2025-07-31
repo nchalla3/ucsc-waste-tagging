@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   User? get currentUser => _auth.currentUser;
 
@@ -25,14 +23,15 @@ class AuthService {
       } else {
         // For mobile platforms (Android/iOS)
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        
+
         if (googleUser == null) {
           // User canceled the sign-in
           return null;
         }
 
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
@@ -51,6 +50,10 @@ class AuthService {
     required String email,
     required String password,
   }) async {
+    if (email.trim().isEmpty || password.isEmpty) {
+      // TODO: Replace with your own user-friendly error message
+      throw Exception('Please enter both email and password.');
+    }
     return await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
@@ -61,6 +64,12 @@ class AuthService {
     required String email,
     required String password,
   }) async {
+    if (email.trim().isEmpty || password.isEmpty) {
+      throw Exception(
+        'Please enter a valid email and password. '
+        'If you haven\'t created an account yet, do so by clicking the Sign Up button.',
+      );
+    }
     return await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -77,10 +86,12 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<void> resetPassword({
-    required String email,
-  }) async {
+  Future<void> resetPassword({required String email}) async {
     await _auth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void> updateUsername({required String username}) async {
+    await currentUser!.updateDisplayName(username);
   }
 
   Future<void> deleteAccount({
@@ -113,7 +124,9 @@ class AuthService {
   Exception _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'account-exists-with-different-credential':
-        return Exception('An account already exists with a different credential.');
+        return Exception(
+          'An account already exists with a different credential.',
+        );
       case 'invalid-credential':
         return Exception('The credential is invalid or has expired.');
       case 'operation-not-allowed':
@@ -132,5 +145,4 @@ class AuthService {
         return Exception('Authentication failed: ${e.message}');
     }
   }
-
 }
