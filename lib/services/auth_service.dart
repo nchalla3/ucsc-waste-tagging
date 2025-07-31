@@ -51,13 +51,21 @@ class AuthService {
     required String password,
   }) async {
     if (email.trim().isEmpty || password.isEmpty) {
-      // TODO: Replace with your own user-friendly error message
-      throw Exception('Please enter both email and password.');
+      throw Exception(
+        'Please enter a valid email and password. '
+        'If you haven\'t created an account yet, do so by clicking the Sign Up button.',
+      );
     }
-    return await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      return await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw Exception('An unexpected error occurred during sign in: $e');
+    }
   }
 
   Future<UserCredential> signUp({
@@ -70,10 +78,16 @@ class AuthService {
         'If you haven\'t created an account yet, do so by clicking the Sign Up button.',
       );
     }
-    return await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      return await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw Exception('An unexpected error occurred during sign up: $e');
+    }
   }
 
   Future<void> signOut() async {
@@ -125,18 +139,20 @@ class AuthService {
     switch (e.code) {
       case 'account-exists-with-different-credential':
         return Exception(
-          'An account already exists with a different credential.',
+          'An account associated with this email address already exists with a different password.',
         );
       case 'invalid-credential':
-        return Exception('The credential is invalid or has expired.');
+        return Exception('The email or password is incorrect.');
+      case 'invalid-email':
+        return Exception('Please enter a valid email address.');
       case 'operation-not-allowed':
         return Exception('This operation is not allowed.');
       case 'user-disabled':
-        return Exception('This user account has been disabled.');
+        return Exception('This account has been disabled.');
       case 'user-not-found':
-        return Exception('No user found with this credential.');
+        return Exception('No user found with this email address.');
       case 'wrong-password':
-        return Exception('Wrong password provided.');
+        return Exception('Incorrect password provided.');
       case 'invalid-verification-code':
         return Exception('Invalid verification code.');
       case 'invalid-verification-id':

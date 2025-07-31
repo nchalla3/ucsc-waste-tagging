@@ -35,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() => _error = e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString());
     } finally {
       if (mounted) {
         setState(() => _loading = false);
