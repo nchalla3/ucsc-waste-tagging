@@ -6,6 +6,10 @@ My initial plan is to start by creating a simple mobile application where users 
 
 From here, I will create a model trained on the aforementioned data to be able to utilize computer vision to automatically determine the levels of contamination in a given campus dumpster using PyTorch and TensorFlow to get a better understanding of how accurately garbage and recycling are sorted in their respective bins on campus.
 
+Check out the web app [here](http://waste-tagging-app.web.app/)
+
+[Click here](https://sites.google.com/view/ucsc-wasteauditing-privacy/home) to access the application's privacy policy
+
 ## 🚀 Getting Started
 
 ### Prerequisites
