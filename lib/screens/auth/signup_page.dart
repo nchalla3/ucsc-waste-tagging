@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:waste_tagging_app/services/auth_service.dart';
 import 'package:waste_tagging_app/widgets/google_sign_in_button.dart';
 
@@ -130,6 +131,23 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 16),
             const GoogleSignInButton(),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () async {
+                final url = AuthService.privacyPolicyUrl;
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                }
+              },
+              child: const Text(
+                'Privacy Policy',
+                style: TextStyle(
+                  color: Color(0xFF003C71), // UCSC Blue
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ],
         ),
       ),
