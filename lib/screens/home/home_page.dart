@@ -436,7 +436,7 @@ class _DropdownWithOther extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           decoration: InputDecoration(
             labelText: label,
             border: const OutlineInputBorder(),

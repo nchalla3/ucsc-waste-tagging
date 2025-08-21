@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- 🔑 Add this -->
+	<key>GIDClientID</key>
+	<string>951790444921-kuim672an7b3r2dqthakppi9jpvmaa4v.apps.googleusercontent.com</string>
+
+	<!-- 🔑 And usually also this for redirect handling -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.951790444921-kuim672an7b3r2dqthakppi9jpvmaa4v</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
